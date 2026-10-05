@@ -25,6 +25,17 @@ export const MODULES: ModuleMeta[] = [
     metrics: ["地层总数", "已校核层数", "待记录层数"],
   },
   {
+    key: "consultation",
+    name: "层位会商",
+    entity: "会商单",
+    desc: "录入地层编号、所属探方、层位序号与土质描述后先出划分建议，再由记录人写明采纳或退回理由，按顺序推进层位。",
+    fields: ["会商编号", "地层编号", "所属探方", "层位序号", "建议结论", "人工结论", "记录人"],
+    statuses: ["待结论", "已通过", "已退回", "已失效", "已归档"],
+    actions: [],
+    actionTargets: {},
+    metrics: ["会商总数", "待结论数", "已通过数"],
+  },
+  {
     key: "feature",
     name: "遗迹单位",
     entity: "遗迹",

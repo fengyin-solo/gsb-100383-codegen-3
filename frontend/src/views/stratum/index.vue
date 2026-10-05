@@ -7,6 +7,7 @@
       </div>
       <div class="page-actions">
         <button class="btn primary" type="button" @click="openCreate">登记地层</button>
+        <RouterLink class="btn" to="/consultation">层位会商台</RouterLink>
         <button class="btn" type="button" @click="exportRows">导出地层记录清单</button>
       </div>
     </header>
@@ -38,6 +39,7 @@
         <tr>
           <th v-for="column in columns" :key="column">{{ column }}</th>
           <th>当前状态</th>
+          <th>层位版本</th>
           <th>可执行动作</th>
         </tr>
       </thead>
@@ -45,7 +47,12 @@
         <tr v-for="row in rows" :key="String(row.id)">
           <td v-for="column in columns" :key="column">{{ row[column] ?? '—' }}</td>
           <td>{{ row.status }}</td>
+          <td>
+            {{ row.version ?? 0 }}
+            <span v-if="row.已归档" class="sealed-tag">已归档封存</span>
+          </td>
           <td class="row-actions">
+            <button class="link" type="button" @click="openConsult(row)">发起会商</button>
             <button
               v-for="action in actions"
               :key="action"
@@ -58,7 +65,7 @@
           </td>
         </tr>
         <tr v-if="!rows.length">
-          <td :colspan="columns.length + 2" class="empty-state">暂无地层记录数据，可先登记地层</td>
+          <td :colspan="columns.length + 3" class="empty-state">暂无地层记录数据，可先登记地层</td>
         </tr>
       </tbody>
     </table>
@@ -72,6 +79,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import {
   downloadEntries,
@@ -80,6 +88,8 @@ import {
   runAction as applyAction,
 } from '@/api/local-service'
 import type { EntryRow } from '@/data/types'
+
+const router = useRouter()
 
 const meta = moduleMeta('stratum')
 const columns = ["地层编号", "所属探方", "层位序号", "土质描述", "土色描述", "包含物特征", "记录人", "记录状态"]
@@ -109,7 +119,20 @@ function exportRows() {
 }
 
 function openCreate() {
-  errorMessage.value = '地层登记入口尚未接入审批流'
+  // 新地层一律走会商台：先出划分建议，人工采纳后才登记，避免直接写原始地层
+  router.push({ path: '/consultation' })
+}
+
+function openConsult(row: EntryRow) {
+  router.push({
+    path: '/consultation',
+    query: {
+      地层编号: String(row.地层编号 ?? ''),
+      所属探方: String(row.所属探方 ?? ''),
+      层位序号: String(row.层位序号 ?? ''),
+      土质描述: String(row.土质描述 ?? ''),
+    },
+  })
 }
 
 function runAction(action: string, row: EntryRow) {

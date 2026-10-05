@@ -35,3 +35,23 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+
+/* 层位会商台与会商校核事项 */
+.panel { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; }
+.panel h3 { margin: 0 0 8px; font-size: 14px; }
+.panel-line { font-size: 13px; color: var(--muted); margin: 4px 0; }
+.panel-list { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: #374151; }
+.panel-list li { margin: 2px 0; }
+.panel .filter-item input { border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; }
+.filter-item.wide { flex: 1; min-width: 260px; }
+.filter-item.wide input { width: 100%; }
+.suggestion { border-top: 1px dashed var(--border); margin-top: 10px; padding-top: 10px; font-size: 13px; }
+.suggestion-head { margin: 0 0 4px; }
+.reason-box { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: 13px; margin-bottom: 8px; }
+.detail-grid { display: grid; grid-template-columns: 96px 1fr; gap: 6px 12px; margin: 0; font-size: 13px; }
+.detail-grid dt { color: var(--muted); }
+.detail-grid dd { margin: 0; }
+.ok-text { color: #027a48; }
+.row-selected td { background: #eef4ff; }
+.sealed-tag { display: inline-block; margin-left: 6px; font-size: 12px; color: #b42318; border: 1px solid #f3c2bd; border-radius: 999px; padding: 0 8px; }
+.verify-panel { border-left: 4px solid var(--brand); }

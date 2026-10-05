@@ -1,9 +1,18 @@
 import { MODULE_BY_KEY } from '@/data/modules'
 import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
+import { checkStratumStep } from '@/data/stratum-flow'
 import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
 const NEGATIVE_ACTIONS = ['撤销', '作废', '拒绝', '驳回', '停用', '忽略', '下线', '回滚']
+
+// 模块级流转守卫：登记了守卫的模块，动作落库前必须先过顺序校验（跳级、归档后回退在这里拦截）。
+const FLOW_GUARDS: Record<string, (row: EntryRow, target: string) => string | null> = {
+  stratum: (row, target) => {
+    const step = checkStratumStep(String(row.status), target, row.已归档 === true)
+    return step.ok ? null : step.message
+  },
+}
 
 export function moduleMeta(key: string): ModuleMeta {
   const meta = MODULE_BY_KEY.get(key)
@@ -43,12 +52,23 @@ export function runAction(key: string, id: number, action: string): ActionResult
   if (current === target) {
     return { ok: false, message: `${meta.entity}已经是「${target}」，不用重复操作` }
   }
+  const guard = FLOW_GUARDS[key]
+  if (guard) {
+    const blocked = guard(rows[index], target)
+    if (blocked) {
+      return { ok: false, message: blocked }
+    }
+  }
   const lastStatus = meta.statuses[meta.statuses.length - 1]
   const updated: EntryRow = {
     ...rows[index],
     status: target,
     pending: target !== lastStatus,
     abnormal: NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
+  }
+  // 地层每推进一步版本号 +1：会商台靠它识别并发会商留下的过期版本。
+  if (key === 'stratum') {
+    updated.version = Number(rows[index].version ?? 0) + 1
   }
   const next = [...rows]
   next[index] = updated

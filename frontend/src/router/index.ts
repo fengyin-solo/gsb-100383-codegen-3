@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '@/views/Dashboard.vue'
 const Trench = () => import('@/views/trench/index.vue')
 const Stratum = () => import('@/views/stratum/index.vue')
+const Consultation = () => import('@/views/consultation/index.vue')
 const Feature = () => import('@/views/feature/index.vue')
 const Artifact = () => import('@/views/artifact/index.vue')
 const Flotation = () => import('@/views/flotation/index.vue')
@@ -26,6 +27,7 @@ const router = createRouter({
     { path: '/', name: 'dashboard', component: Dashboard },
     { path: '/trench', name: 'trench', component: Trench },
     { path: '/stratum', name: 'stratum', component: Stratum },
+    { path: '/consultation', name: 'consultation', component: Consultation },
     { path: '/feature', name: 'feature', component: Feature },
     { path: '/artifact', name: 'artifact', component: Artifact },
     { path: '/flotation', name: 'flotation', component: Flotation },

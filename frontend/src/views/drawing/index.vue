@@ -24,6 +24,16 @@
       </span>
     </p>
 
+    <section v-if="verifyItems.length" class="panel verify-panel">
+      <h3>层位会商校核事项（{{ verifyItems.length }} 项待处理）</h3>
+      <p class="panel-line">以下校核事项由层位会商结论通过后同步登记，需在本页完成校核流转。</p>
+      <ul class="panel-list">
+        <li v-for="item in verifyItems" :key="String(item.id)">
+          来源会商 {{ item.来源会商 }} · {{ item.绘图对象 }} · {{ item.图纸编号 }} · 当前「{{ item.status }}」
+        </li>
+      </ul>
+    </section>
+
     <form class="filter-bar" @submit.prevent="reload">
       <label v-for="field in filterFields" :key="field" class="filter-item">
         <span>{{ field }}</span>
@@ -97,6 +107,13 @@ const statusSummary = computed(() =>
     status,
     count: rows.value.filter((row) => String(row.status) === status).length,
   })),
+)
+
+// 层位会商结论通过后同步过来的校核事项：未完成校核、数字化的都列出来
+const verifyItems = computed(() =>
+  rows.value.filter(
+    (row) => row.来源会商 && row.status !== '已校核' && row.status !== '已数字化',
+  ),
 )
 
 function resetFilters() {

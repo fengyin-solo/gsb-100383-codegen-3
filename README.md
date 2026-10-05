@@ -44,6 +44,7 @@ npm run build
 | --- | --- | --- | --- |
 | 探方管理 | `trench` | 探方 | 探方编号、所属发掘区、探方尺寸 |
 | 地层记录 | `stratum` | 地层 | 地层编号、所属探方、层位序号 |
+| 层位会商 | `consultation` | 会商单 | 会商编号、地层编号、建议结论、人工结论 |
 | 遗迹单位 | `feature` | 遗迹 | 遗迹编号、所属探方、遗迹类型 |
 | 出土遗物 | `artifact` | 出土遗物 | 器物编号、出土探方、出土层位 |
 | 浮选采样 | `flotation` | 浮选样本 | 样本编号、采样单位、采样层位 |
@@ -68,4 +69,10 @@ npm run build
 - 字段、状态、动作与流转目标集中在 `frontend/src/data/modules.ts`；示例数据在
   `frontend/src/data/seed.ts`。
 - 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
+- 层位会商台（`frontend/src/views/consultation/index.vue`）是地层登记的入口：录入地层编号、
+  所属探方、层位序号、土质描述后，先由 `frontend/src/data/consultation.ts` 里的判定规则、阈值和
+  标准给出划分建议，记录人再写明采纳或退回理由；会商只按「已划分→已记录→已校核→需补录」的顺序
+  推进层位状态（守卫在 `frontend/src/data/stratum-flow.ts`），不直接覆盖原始地层。建议规则与人工
+  结论冲突时按「硬性标准 > 理由充分的人工结论 > 系统建议」裁决；结论通过后实测绘图页同步增加
+  校核事项；同一地层的并发会商只留一个有效版本（基准版本号校验）。
 - 想回到初始数据：清掉浏览器里 `field-archaeology-digital:entries` 这一项，或调用 `resetModule(模块)`。
