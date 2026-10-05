@@ -7,6 +7,7 @@
       </div>
       <div class="page-actions">
         <button class="btn primary" type="button" @click="openCreate">登记地层</button>
+        <RouterLink class="btn" to="/stratum/consultation">进入层位会商台</RouterLink>
         <button class="btn" type="button" @click="exportRows">导出地层记录清单</button>
       </div>
     </header>

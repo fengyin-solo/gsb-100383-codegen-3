@@ -57,3 +57,32 @@ export function resetRows(key: string): EntryRow[] {
 export function storageKey(): string {
   return STORAGE_KEY
 }
+
+// 层位会商等新增业务集合不套用既有模块的 EntryRow 结构，单独用一组具名集合持久化，
+// 与上面的模块数据互不影响：命名仍是 field-archaeology-digital:*，清缓存时一并清掉。
+const COLLECTION_PREFIX = 'field-archaeology-digital:'
+
+export function readCollection<T>(name: string, fallback: T[]): T[] {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return clone(fallback)
+  }
+  const key = COLLECTION_PREFIX + name
+  const raw = window.localStorage.getItem(key)
+  if (!raw) {
+    window.localStorage.setItem(key, JSON.stringify(fallback))
+    return clone(fallback)
+  }
+  try {
+    return JSON.parse(raw) as T[]
+  } catch {
+    window.localStorage.setItem(key, JSON.stringify(fallback))
+    return clone(fallback)
+  }
+}
+
+export function writeCollection<T>(name: string, rows: T[]): void {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return
+  }
+  window.localStorage.setItem(COLLECTION_PREFIX + name, JSON.stringify(rows))
+}
